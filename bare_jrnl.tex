@@ -1,0 +1,528 @@
+%% bare_jrnl.tex
+%% V1.4b
+%% 2015/08/26
+%% by Michael Shell
+%% see http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.8b or later) with an IEEE
+%% journal paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/pkg/ieeetran
+%% and
+%% http://www.ieee.org/
+
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% User assumes all risk.
+%% In no event shall the IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%*************************************************************************
+
+
+% *** Authors should verify (and, if needed, correct) their LaTeX system  ***
+% *** with the testflow diagnostic prior to trusting their LaTeX platform ***
+% *** with production work. The IEEE's font choices and paper sizes can   ***
+% *** trigger bugs that do not appear when using other class files.       ***                          ***
+% The testflow support page is at:
+% http://www.michaelshell.org/tex/testflow/
+
+
+
+\documentclass[journal]{IEEEtran}
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[journal]{../sty/IEEEtran}
+
+
+
+
+
+% Some very useful LaTeX packages include:
+% (uncomment the ones you want to load)
+
+
+% *** MISC UTILITY PACKAGES ***
+%
+%\usepackage{ifpdf}
+% Heiko Oberdiek's ifpdf.sty is very useful if you need conditional
+% compilation based on whether the output is pdf or dvi.
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+% The latest version of ifpdf.sty can be obtained from:
+% http://www.ctan.org/pkg/ifpdf
+% Also, note that IEEEtran.cls V1.7 and later provides a builtin
+% \ifCLASSINFOpdf conditional that works the same way.
+% When switching from latex to pdflatex and vice-versa, the compiler may
+% have to be run twice to clear warning/error messages.
+
+
+
+
+
+
+% *** CITATION PACKAGES ***
+%
+%\usepackage{cite}
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of the IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off
+% such as if a citation ever needs to be enclosed in parenthesis.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 5.0 (2009-03-20) and later if using hyperref.sty.
+% The latest version can be obtained at:
+% http://www.ctan.org/pkg/cite
+% The documentation is contained in the cite.sty file itself.
+
+
+
+
+
+
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+  % \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../pdf/}{../jpeg/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+% graphicx was written by David Carlisle and Sebastian Rahtz. It is
+% required if you want graphics, photos, etc. graphicx.sty is already
+% installed on most LaTeX systems. The latest version and documentation
+% can be obtained at: 
+% http://www.ctan.org/pkg/graphicx
+% Another good source of documentation is "Using Imported Graphics in
+% LaTeX2e" by Keith Reckdahl which can be found at:
+% http://www.ctan.org/pkg/epslatex
+%
+% latex, and pdflatex in dvi mode, support graphics in encapsulated
+% postscript (.eps) format. pdflatex in pdf mode supports graphics
+% in .pdf, .jpeg, .png and .mps (metapost) formats. Users should ensure
+% that all non-photo figures use a vector format (.eps, .pdf, .mps) and
+% not a bitmapped formats (.jpeg, .png). The IEEE frowns on bitmapped formats
+% which can result in "jaggedy"/blurry rendering of lines and letters as
+% well as large increases in file sizes.
+%
+% You can find documentation about the pdfTeX application at:
+% http://www.tug.org/applications/pdftex
+
+
+
+
+
+% *** MATH PACKAGES ***
+%
+%\usepackage{amsmath}
+% A popular package from the American Mathematical Society that provides
+% many useful and powerful commands for dealing with mathematics.
+%
+% Note that the amsmath package sets \interdisplaylinepenalty to 10000
+% thus preventing page breaks from occurring within multiline equations. Use:
+%\interdisplaylinepenalty=2500
+% after loading amsmath to restore such page breaks as IEEEtran.cls normally
+% does. amsmath.sty is already installed on most LaTeX systems. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/pkg/amsmath
+
+
+
+
+
+% *** SPECIALIZED LIST PACKAGES ***
+%
+%\usepackage{algorithmic}
+% algorithmic.sty was written by Peter Williams and Rogerio Brito.
+% This package provides an algorithmic environment fo describing algorithms.
+% You can use the algorithmic environment in-text or within a figure
+% environment to provide for a floating algorithm. Do NOT use the algorithm
+% floating environment provided by algorithm.sty (by the same authors) or
+% algorithm2e.sty (by Christophe Fiorio) as the IEEE does not use dedicated
+% algorithm float types and packages that provide these will not provide
+% correct IEEE style captions. The latest version and documentation of
+% algorithmic.sty can be obtained at:
+% http://www.ctan.org/pkg/algorithms
+% Also of interest may be the (relatively newer and more customizable)
+% algorithmicx.sty package by Szasz Janos:
+% http://www.ctan.org/pkg/algorithmicx
+
+
+
+
+% *** ALIGNMENT PACKAGES ***
+%
+%\usepackage{array}
+% Frank Mittelbach's and David Carlisle's array.sty patches and improves
+% the standard LaTeX2e array and tabular environments to provide better
+% appearance and additional user controls. As the default LaTeX2e table
+% generation code is lacking to the point of almost being broken with
+% respect to the quality of the end results, all users are strongly
+% advised to use an enhanced (at the very least that provided by array.sty)
+% set of table tools. array.sty is already installed on most systems. The
+% latest version and documentation can be obtained at:
+% http://www.ctan.org/pkg/array
+
+
+% IEEEtran contains the IEEEeqnarray family of commands that can be used to
+% generate multiline equations as well as matrices, tables, etc., of high
+% quality.
+
+
+
+
+% *** SUBFIGURE PACKAGES ***
+%\ifCLASSOPTIONcompsoc
+%  \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\else
+%  \usepackage[caption=false,font=footnotesize]{subfig}
+%\fi
+% subfig.sty, written by Steven Douglas Cochran, is the modern replacement
+% for subfigure.sty, the latter of which is no longer maintained and is
+% incompatible with some LaTeX packages including fixltx2e. However,
+% subfig.sty requires and automatically loads Axel Sommerfeldt's caption.sty
+% which will override IEEEtran.cls' handling of captions and this will result
+% in non-IEEE style figure/table captions. To prevent this problem, be sure
+% and invoke subfig.sty's "caption=false" package option (available since
+% subfig.sty version 1.3, 2005/06/28) as this is will preserve IEEEtran.cls
+% handling of captions.
+% Note that the Computer Society format requires a larger sans serif font
+% than the serif footnote size font used in traditional IEEE formatting
+% and thus the need to invoke different subfig.sty package options depending
+% on whether compsoc mode has been enabled.
+%
+% The latest version and documentation of subfig.sty can be obtained at:
+% http://www.ctan.org/pkg/subfig
+
+
+
+
+% *** FLOAT PACKAGES ***
+%
+%\usepackage{fixltx2e}
+% fixltx2e, the successor to the earlier fix2col.sty, was written by
+% Frank Mittelbach and David Carlisle. This package corrects a few problems
+% in the LaTeX2e kernel, the most notable of which is that in current
+% LaTeX2e releases, the ordering of single and double column floats is not
+% guaranteed to be preserved. Thus, an unpatched LaTeX2e can allow a
+% single column figure to be placed prior to an earlier double column
+% figure.
+% Be aware that LaTeX2e kernels dated 2015 and later have fixltx2e.sty's
+% corrections already built into the system in which case a warning will
+% be issued if an attempt is made to load fixltx2e.sty as it is no longer
+% needed.
+% The latest version and documentation can be found at:
+% http://www.ctan.org/pkg/fixltx2e
+
+
+%\usepackage{stfloats}
+% stfloats.sty was written by Sigitas Tolusis. This package gives LaTeX2e
+% the ability to do double column floats at the bottom of the page as well
+% as the top. (e.g., "\begin{figure*}[!b]" is not normally possible in
+% LaTeX2e). It also provides a command:
+%\fnbelowfloat
+% to enable the placement of footnotes below bottom floats (the standard
+% LaTeX2e kernel puts them above bottom floats). This is an invasive package
+% which rewrites many portions of the LaTeX2e float routines. It may not work
+% with other packages that modify the LaTeX2e float routines. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/pkg/stfloats
+% Do not use the stfloats baselinefloat ability as the IEEE does not allow
+% \baselineskip to stretch. Authors submitting work to the IEEE should note
+% that the IEEE rarely uses double column equations and that authors should try
+% to avoid such use. Do not be tempted to use the cuted.sty or midfloat.sty
+% packages (also by Sigitas Tolusis) as the IEEE does not format its papers in
+% such ways.
+% Do not attempt to use stfloats with fixltx2e as they are incompatible.
+% Instead, use Morten Hogholm'a dblfloatfix which combines the features
+% of both fixltx2e and stfloats:
+%
+% \usepackage{dblfloatfix}
+% The latest version can be found at:
+% http://www.ctan.org/pkg/dblfloatfix
+
+
+
+
+%\ifCLASSOPTIONcaptionsoff
+%  \usepackage[nomarkers]{endfloat}
+% \let\MYoriglatexcaption\caption
+% \renewcommand{\caption}[2][\relax]{\MYoriglatexcaption[#2]{#2}}
+%\fi
+% endfloat.sty was written by James Darrell McCauley, Jeff Goldberg and 
+% Axel Sommerfeldt. This package may be useful when used in conjunction with 
+% IEEEtran.cls'  captionsoff option. Some IEEE journals/societies require that
+% submissions have lists of figures/tables at the end of the paper and that
+% figures/tables without any captions are placed on a page by themselves at
+% the end of the document. If needed, the draftcls IEEEtran class option or
+% \CLASSINPUTbaselinestretch interface can be used to increase the line
+% spacing as well. Be sure and use the nomarkers option of endfloat to
+% prevent endfloat from "marking" where the figures would have been placed
+% in the text. The two hack lines of code above are a slight modification of
+% that suggested by in the endfloat docs (section 8.4.1) to ensure that
+% the full captions always appear in the list of figures/tables - even if
+% the user used the short optional argument of \caption[]{}.
+% IEEE papers do not typically make use of \caption[]'s optional argument,
+% so this should not be an issue. A similar trick can be used to disable
+% captions of packages such as subfig.sty that lack options to turn off
+% the subcaptions:
+% For subfig.sty:
+% \let\MYorigsubfloat\subfloat
+% \renewcommand{\subfloat}[2][\relax]{\MYorigsubfloat[]{#2}}
+% However, the above trick will not work if both optional arguments of
+% the \subfloat command are used. Furthermore, there needs to be a
+% description of each subfigure *somewhere* and endfloat does not add
+% subfigure captions to its list of figures. Thus, the best approach is to
+% avoid the use of subfigure captions (many IEEE journals avoid them anyway)
+% and instead reference/explain all the subfigures within the main caption.
+% The latest version of endfloat.sty and its documentation can obtained at:
+% http://www.ctan.org/pkg/endfloat
+%
+% The IEEEtran \ifCLASSOPTIONcaptionsoff conditional can also be used
+% later in the document, say, to conditionally put the References on a 
+% page by themselves.
+
+
+
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+%
+%\usepackage{url}
+% url.sty was written by Donald Arseneau. It provides better support for
+% handling and breaking URLs. url.sty is already installed on most LaTeX
+% systems. The latest version and documentation can be obtained at:
+% http://www.ctan.org/pkg/url
+% Basically, \url{my_url_here}.
+
+
+
+
+% *** Do not adjust lengths that control margins, column widths, etc. ***
+% *** Do not use packages that alter fonts (such as pslatex).         ***
+% There should be no need to do such things with IEEEtran.cls V1.6 and later.
+% (Unless specifically asked to do so by the journal or conference you plan
+% to submit to, of course. )
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+
+% ------------------------------------------------------------
+% TITLE & AUTHORS
+% ------------------------------------------------------------
+\title{Algorithmic Enhancements to K-Means Clustering:\\Initialization and Iterative Optimization}
+
+% Enter your team members' names here
+\author{Derin~Akay,~\IEEEmembership{ID: 40294984,}
+        Zi Lun~Li,~\IEEEmembership{ID: 40191860,}
+        and~Student~Name3,~\IEEEmembership{ID: 123456}%
+\thanks{This report was submitted for COMP 6651, Winter 2026, Concordia University.}%
+}
+
+% The paper headers
+\markboth{COMP 6651 Project Part I, Winter 2026}%
+{Team Name \MakeLowercase{\textit{et al.}}: Algorithmic Enhancements to K-Means Clustering}
+
+\maketitle
+
+% ------------------------------------------------------------
+% ABSTRACT
+% ------------------------------------------------------------
+\begin{abstract}
+% TODO: UPDATE THIS SECTION AFTER EXPERIMENTS. 
+% Once Part 4 is complete, come back here and add 1-2 sentences summarizing 
+% the specific findings (e.g., "Our proposed initialization improved convergence speed by 20%").
+Clustering is a fundamental unsupervised learning technique used to group data points based on similarity. This paper presents an in-depth study of the k-means algorithm, analyzing its computational complexity and addressing its limitations regarding initialization sensitivity and convergence speed. We propose a novel initialization heuristic and an optimized iterative update step to enhance performance. Furthermore, we implement an ``Alternate k-means'' variant that restricts reassignment to the furthest point in each cluster. We compare the standard k-means, our proposed algorithm, and the alternate variant across three diverse datasets (Iris, AI Global Index, and Global Earthquake Data). Our experimental results evaluate these methods based on cluster quality (SSE), convergence iterations, stability, and runtime efficiency.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Clustering, k-means, Algorithm Design, Unsupervised Learning, Complexity Analysis.
+\end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
+
+% ------------------------------------------------------------
+% SECTION 1: INTRODUCTION
+% ------------------------------------------------------------
+\section{Introduction}
+
+\IEEEPARstart{C}{lustering} is a Machine Learning technique involving the grouping of data points, serving as a classical method for statistical data analysis and unsupervised learning. The primary goal of clustering is to extract value from large volumes of structured and unstructured data by separating items based on their properties, resulting in high intra-cluster similarity and low inter-cluster similarity.
+
+While numerous clustering algorithms exist, identifying the most appropriate one for a specific problem remains a challenge \cite{rodriguez2019, jain2010}. Among these, the \textit{k-means} algorithm—originally proposed by Lloyd \cite{lloyd1982} and formally termed k-means by MacQueen \cite{macqueen1967}—remains one of the most widely used approaches due to its simplicity and linear time complexity \cite{ahmed2020}. However, it suffers from known limitations, particularly its sensitivity to initialization, which has led to standard improvements like k-means++ \cite{arthur2007}.
+
+\subsection{Goal of the Project}
+The objective of this paper is to conduct a comprehensive study of the classical k-means algorithm, analyzing its theoretical complexity and practical limitations. Beyond analysis, we aim to design and evaluate algorithmic enhancements to improve the algorithm's initialization and iterative update steps. We seek to determine if specific heuristic modifications can yield better stability, faster convergence, or lower Sum of Squares Error (SSE) compared to the standard implementation.
+
+\subsection{Summary of Work}
+In this project, we implement and analyze three distinct algorithmic approaches. First, we examine the classical k-means algorithm and provide a detailed time complexity analysis. Second, we propose a custom algorithm that introduces a novel method for selecting initial centroids (avoiding standard literature approaches like k-means++) and optimizes the iterative update process to reduce computational overhead. 
+
+Third, we implement an ``Alternate k-means'' variant. In this version, the centroid update step is modified to allow only the reassignment of the single point furthest from the centroid in each cluster ("worst-fit"), rather than reassigning all points simultaneously.
+
+We evaluate the performance of these three algorithms—Standard k-means (via Scikit-learn), our Proposed Algorithm, and the Alternate k-means—across three distinct datasets: the Iris dataset, the AI Global Index, and Global Earthquake Data. We perform comparative experiments for $k=\{2, 5, 10, 20\}$ to visualize cluster quality, analyze convergence behavior, and measure runtime scalability.
+
+\subsection{Plan of the Paper}
+The remainder of this paper is organized as follows: Section II details the complexity analysis of the classical k-means algorithm. Section III introduces our proposed improvements to the initialization and iterative steps, including their complexity analysis. Section IV presents the Alternate k-means algorithm and discusses the experimental results comparing all three methods. Finally, Section V concludes the paper with insights on the trade-offs and potential use cases for each approach.
+
+% ------------------------------------------------------------
+% SECTION 2: COMPLEXITY ANALYSIS
+% ------------------------------------------------------------
+\section{Complexity of the k-means Algorithm}
+In this section, we analyze the computational complexity of the standard k-means algorithm (often referred to as Lloyd's algorithm) as described in the project specification.
+
+We define the following parameters for our analysis:
+\begin{itemize}
+    \item $n$: The number of data points in the dataset.
+    \item $d$: The dimensionality of the data (number of features per point).
+    \item $k$: The number of desired clusters.
+    \item $t$: The number of iterations required for the algorithm to converge.
+\end{itemize}
+
+The algorithm consists of an initialization step followed by an iterative loop containing two primary phases: the assignment step and the centroid update step. We analyze the cost of each phase below.
+
+\subsection{Initialization Step}
+The algorithm begins by arbitrarily choosing $k$ data items from the dataset to serve as initial centroids.
+\begin{itemize}
+    \item Copying $k$ vectors, each of dimension $d$, requires $O(k \cdot d)$ operations.
+    \item Compared to the iterative steps, this cost is negligible.
+\end{itemize}
+
+\subsection{Iterative Process}
+The main loop executes for $t$ iterations. Inside this loop, two operations are performed:
+
+\subsubsection{Assignment Step}
+In this step, every data point is assigned to the closest centroid.
+\begin{itemize}
+    \item For a single data point, we calculate the Euclidean distance to all $k$ centroids.
+    \item Computing the Euclidean distance between two $d$-dimensional vectors involves $d$ subtractions, $d$ squarings, and summing them up, taking $O(d)$ time.
+    \item Therefore, finding the closest centroid for one point takes $O(k \cdot d)$.
+    \item Since this must be done for all $n$ data points, the total complexity for the assignment step in one iteration is:
+    \begin{equation}
+        O(n \cdot k \cdot d)
+    \end{equation}
+\end{itemize}
+
+\subsubsection{Update Step}
+In this step, the centroids are recomputed by taking the mean of all data points assigned to that cluster.
+\begin{itemize}
+    \item We initialize $k$ new centroid vectors of size $d$ to zero.
+    \item We iterate through all $n$ data points. For each point, we add its $d$ feature values to the accumulator of its assigned cluster. This summation takes $O(n \cdot d)$.
+    \item Finally, we divide the summed values by the count of points in each cluster. Performing this division for $k$ centroids (each with $d$ dimensions) takes $O(k \cdot d)$.
+    \item The dominant term here is the summation over the dataset, making the complexity of the update step:
+    \begin{equation}
+        O(n \cdot d)
+    \end{equation}
+\end{itemize}
+
+\subsection{Total Time Complexity}
+Combining the costs from the assignment and update steps, the complexity per iteration is:
+\begin{equation}
+    O(n \cdot k \cdot d) + O(n \cdot d) = O(n \cdot k \cdot d)
+\end{equation}
+(Note: Since $k \ge 1$, the $n \cdot k \cdot d$ term dominates $n \cdot d$).
+
+Since the algorithm runs for $t$ iterations, the final total time complexity is:
+\begin{equation}
+    \label{eq:complexity}
+    O(t \cdot n \cdot k \cdot d)
+\end{equation}
+
+This analysis assumes a standard implementation where distances are computed explicitly in every iteration. It demonstrates that the algorithm scales linearly with the number of points $n$, dimensions $d$, and clusters $k$, making it efficient for large datasets, provided $k$ and $d$ remain relatively small.
+While the average-case complexity is linear as shown in (\ref{eq:complexity}), it is worth noting that the worst-case running time of standard k-means can be super-polynomial \cite{arthur2007}, though such pathological cases are rare in practice \cite{jain2010}.
+
+% ------------------------------------------------------------
+% SECTION 3: PROPOSED ALGORITHM (To be filled in)
+% ------------------------------------------------------------
+\section{Proposed Algorithm}
+% We will write this section later.
+
+% ------------------------------------------------------------
+% SECTION 4: ALTERNATE K-MEANS (To be filled in)
+% ------------------------------------------------------------
+\section{An Alternate k-means Algorithm}
+% We will write this section later.
+
+% ------------------------------------------------------------
+% CONCLUSION
+% ------------------------------------------------------------
+\section{Conclusion}
+% We will write this section at the end of the project.
+
+% ------------------------------------------------------------
+% REFERENCES
+% ------------------------------------------------------------
+\begin{thebibliography}{1}
+
+\bibitem{hartigan1975}
+J.A. Hartigan, \emph{Clustering Algorithms}. New York: John Wiley \& Sons, 1975.
+
+\bibitem{macqueen1967}
+J.B. MacQueen, ``Some methods for classification and analysis of multivariate observations,'' in \emph{Proc. 5th Berkeley Symp. Math. Statist. Probability}, 1967, pp. 281--297.
+
+\bibitem{rodriguez2019}
+M.Z. Rodriguez, C.H. Comin, D. Casanova, O.M. Bruno, D.R. Amancio, L.D.F. Costa, and F.A. Rodrigues, ``Clustering algorithms: A comparative approach,'' \emph{PLoS One}, vol. 14, no. 1, p. e0210236, Jan. 2019.
+
+\bibitem{lloyd1982}
+S. P. Lloyd, ``Least squares quantization in PCM,'' \emph{IEEE Trans. Inf. Theory}, vol. 28, no. 2, pp. 129--137, Mar. 1982.
+
+\bibitem{jain2010}
+A. K. Jain, ``Data clustering: 50 years beyond K-means,'' \emph{Pattern Recognit. Lett.}, vol. 31, no. 8, pp. 651--666, 2010.
+
+\bibitem{arthur2007}
+D. Arthur and S. Vassilvitskii, ``k-means++: The advantages of careful seeding,'' in \emph{Proc. 18th Annu. ACM-SIAM Symp. Discrete Algorithms}, 2007, pp. 1027--1035.
+
+\bibitem{ahmed2020}
+M. Ahmed, R. Seraj, and S. M. S. Islam, ``The k-means algorithm: A comprehensive survey and performance evaluation,'' \emph{Electronics}, vol. 9, no. 8, p. 1295, 2020.
+
+\end{thebibliography}
+
+% This biography section is optional for the project but part of the template. 
+% You can leave it commented out or delete it if not needed.
+%\begin{IEEEbiography}{Student Name}
+%Biography text here.
+%\end{IEEEbiography}
+
+\end{document}
