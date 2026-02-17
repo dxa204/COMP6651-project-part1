@@ -1,0 +1,50 @@
+======================================================================
+ENHANCED K-MEANS CLUSTERING — ANALYSIS REPORT
+======================================================================
+
+INITIALIZATION: Density-Aware Spread Initialization (DASI)
+----------------------------------------------------------------------
+  First centroid : highest local density point (most representative)
+  Next centroids : maximise score = 0.5*spread + 0.3*density + 0.2*spread^2
+  Time complexity: O(n^2*d + k^2*n*d), approx O(n^2*d) for k << n
+
+ITERATIVE STEP
+----------------------------------------------------------------------
+  Distance: vectorised via ||x-c||^2 = ||x||^2 + ||c||^2 - 2*x*c^T  O(n*k*d)
+  Update  : mean of assigned points per cluster                       O(n*d)
+  Stopping: early exit when max centroid shift < tol
+  Empty   : empty clusters reinitialised to a random point
+  Total   : O(n^2*d + T*n*k*d)  where T = iterations until convergence
+
+
+RESULTS
+======================================================================
+
+Dataset: D1_Processed
+----------------------------------------------------------------------
+k      Avg SSE          Min SSE          Max SSE          Avg Iters   
+----------------------------------------------------------------------
+2      223.91           223.91           223.91           5.0         
+5      102.76           102.76           102.76           7.0         
+10     53.57            53.57            53.57            9.0         
+20     25.29            25.29            25.29            4.0         
+
+
+Dataset: D2_Processed
+----------------------------------------------------------------------
+k      Avg SSE          Min SSE          Max SSE          Avg Iters   
+----------------------------------------------------------------------
+2      353.69           353.69           353.69           2.0         
+5      156.64           156.64           156.64           6.0         
+10     93.49            93.49            93.49            5.0         
+20     46.64            46.64            46.64            5.0         
+
+
+Dataset: D3_Processed
+----------------------------------------------------------------------
+k      Avg SSE          Min SSE          Max SSE          Avg Iters   
+----------------------------------------------------------------------
+2      5466.57          5466.57          5466.57          5.0         
+5      2118.55          2118.55          2118.55          15.0        
+10     1141.55          1141.55          1141.55          6.0         
+20     532.48           532.48           532.48           8.0         
