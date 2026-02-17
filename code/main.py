@@ -15,11 +15,6 @@ OUTPUT_DIR = os.path.join(SCRIPT_DIR, 'results')
 K_VALUES   = [2, 5, 10, 20]
 N_RUNS     = 5
 
-
-# ----------------------------------------------------------------------
-# Data loading and preprocessing
-# ----------------------------------------------------------------------
-
 def load_datasets():
     datasets = {}
     for name in ['D1_Processed.csv', 'D2_Processed.csv', 'D3_Processed.csv']:
@@ -37,10 +32,6 @@ def preprocess(df):
     numeric = df.select_dtypes(include=[np.number]).fillna(df.mean(numeric_only=True))
     return StandardScaler().fit_transform(numeric.values)
 
-
-# ----------------------------------------------------------------------
-# Experiments
-# ----------------------------------------------------------------------
 
 def run_experiments(X, dataset_name):
     print(f"\n{'='*60}\n{dataset_name}  |  shape: {X.shape}\n{'='*60}")
@@ -64,15 +55,9 @@ def run_experiments(X, dataset_name):
             'avg_sse':      np.mean([r['sse']    for r in runs]),
             'avg_iterations': np.mean([r['n_iter'] for r in runs]),
             'avg_time':     np.mean([r['time']   for r in runs]),
-            'all_sse':      [r['sse'] for r in runs],
         }
 
     return results
-
-
-# ----------------------------------------------------------------------
-# Visualizations
-# ----------------------------------------------------------------------
 
 def plot_clusters(X, results, dataset_name):
     if X.shape[1] > 2:
@@ -107,48 +92,27 @@ def plot_clusters(X, results, dataset_name):
 def plot_sse(results, dataset_name):
     sse   = [results[k]['avg_sse']        for k in K_VALUES]
     iters = [results[k]['avg_iterations'] for k in K_VALUES]
-    times = [results[k]['avg_time']       for k in K_VALUES]
 
-    # Also collect per-run SSE for a box plot
-    all_sse = [results[k]['all_sse'] for k in K_VALUES]
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
-
-    # SSE elbow curve
     axes[0].plot(K_VALUES, sse, marker='o', color='steelblue', linewidth=2)
-    axes[0].set_title("SSE vs k  (Elbow Curve)", fontweight='bold')
+    axes[0].set_title("SSE vs k", fontweight='bold')
     axes[0].set_xlabel("k")
     axes[0].set_ylabel("SSE")
     axes[0].set_xticks(K_VALUES)
     axes[0].grid(True, alpha=0.3)
 
-    # SSE spread across runs (box plot)
-    axes[1].boxplot(all_sse, positions=K_VALUES, widths=1.2,
-                    patch_artist=True,
-                    boxprops=dict(facecolor='steelblue', alpha=0.6))
-    axes[1].set_title("SSE Spread Across Runs", fontweight='bold')
+    axes[1].bar(K_VALUES, iters, color='skyblue', edgecolor='black', alpha=0.75, width=1.5)
+    axes[1].set_title("Avg Iterations to Convergence", fontweight='bold')
     axes[1].set_xlabel("k")
-    axes[1].set_ylabel("SSE")
+    axes[1].set_ylabel("Iterations")
     axes[1].set_xticks(K_VALUES)
     axes[1].grid(True, alpha=0.3, axis='y')
-
-    # Iterations to convergence
-    axes[2].bar(K_VALUES, iters, color='skyblue', edgecolor='black', alpha=0.75, width=1.5)
-    axes[2].set_title("Avg Iterations to Convergence", fontweight='bold')
-    axes[2].set_xlabel("k")
-    axes[2].set_ylabel("Iterations")
-    axes[2].set_xticks(K_VALUES)
-    axes[2].grid(True, alpha=0.3, axis='y')
 
     plt.suptitle(f"SSE Analysis — {dataset_name}", fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, f"{dataset_name}_sse.png"), dpi=150, bbox_inches='tight')
     plt.close()
-
-
-# ----------------------------------------------------------------------
-# Summary report
-# ----------------------------------------------------------------------
 
 def save_report(all_results):
     lines = [
@@ -180,17 +144,12 @@ def save_report(all_results):
             "",
             f"Dataset: {dataset_name}",
             "-" * 70,
-            f"{'k':<6} {'Avg SSE':<16} {'Min SSE':<16} {'Max SSE':<16} {'Avg Iters':<12}",
+            f"{'k':<6} {'Avg SSE':<16} {'Avg Iters':<12}",
             "-" * 70,
         ]
         for k in K_VALUES:
             r = results[k]
-            lines.append(
-                f"{k:<6} {r['avg_sse']:<16.2f} "
-                f"{min(r['all_sse']):<16.2f} "
-                f"{max(r['all_sse']):<16.2f} "
-                f"{r['avg_iterations']:<12.1f}"
-            )
+            lines.append(f"{k:<6} {r['avg_sse']:<16.2f} {r['avg_iterations']:<12.1f}")
         lines.append("")
 
     report = "\n".join(lines)
@@ -198,11 +157,6 @@ def save_report(all_results):
     with open(path, 'w', encoding='utf-8') as f:
         f.write(report)
     print("\n" + report)
-
-
-# ----------------------------------------------------------------------
-# Main
-# ----------------------------------------------------------------------
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
