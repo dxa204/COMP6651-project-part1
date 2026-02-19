@@ -9,7 +9,8 @@ class EnhancedKMeans:
       2. Vectorized distance computation and adaptive convergence
     """
 
-    def __init__(self, k, max_iter=100, tol=1e-4, random_state=None):
+    # https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html 
+    def __init__(self, k, max_iter=300, tol=1e-4, random_state=None):
         self.k = k
         self.max_iter = max_iter
         self.tol = tol
@@ -25,7 +26,7 @@ class EnhancedKMeans:
         if random_state is not None:
             np.random.seed(random_state)
 
-    def _local_density(self, X, k_neighbors=10):
+    def _local_density(self, X, k_neighbors=8):
         """
         For each point, compute its local density as the inverse of the
         average distance to its k nearest neighbours.
@@ -39,7 +40,7 @@ class EnhancedKMeans:
         norms = np.sum(X ** 2, axis=1, keepdims=True)
         dist_matrix = np.sqrt(np.maximum(norms + norms.T - 2 * X @ X.T, 0))
 
-        # Sort each row; skip column 0 (distance to self = 0)
+        # Sort each row; skip column 0 (distance to self = 0) (itself)
         sorted_dists = np.sort(dist_matrix, axis=1)
         avg_knn_dist = np.mean(sorted_dists[:, 1:k_neighbors + 1], axis=1)
 
@@ -52,6 +53,8 @@ class EnhancedKMeans:
           - Spread     (50%): how far it is from already-chosen centroids
           - Density    (30%): how representative it is of a dense region
           - Coverage   (20%): squared spread, to further reward distant points
+
+        So spread * 0.5 + density * 0.3 + coverage * 0.2 = next centroid
 
         First centroid is always the densest point.
         Subsequent centroids maximise the combined score above.
