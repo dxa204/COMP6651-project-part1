@@ -474,11 +474,49 @@ This analysis assumes a standard implementation where distances are computed exp
 While the average-case complexity is linear as shown in (\ref{eq:complexity}), it is worth noting that the worst-case running time of standard k-means can be super-polynomial \cite{arthur2007}, though such pathological cases are rare in practice \cite{jain2010}.
 
 % ------------------------------------------------------------
-% SECTION 3: PROPOSED ALGORITHM (To be filled in)
+% SECTION 3: PROPOSED ALGORITHM
 % ------------------------------------------------------------
 \section{Proposed Algorithm}
-% We will write this section later.
+To address the limitations of the standard k-means algorithm, particularly its sensitivity to poor initial centroid placement and the high computational cost of its iterative steps, we propose two major enhancements. First, we introduce a custom initialization heuristic. Second, we apply mathematical optimizations to the iterative reassignment phase.
 
+\subsection{Initialization: Density-Aware Spread Initialization}
+Standard initialization methods often rely on uniform random selection, which can lead to suboptimal clustering or slow convergence if centroids are initialized too close together or in outlier regions. To avoid relying on established literature approaches such as k-means++, we designed a novel initialization method called \textit{Density-Aware Spread Initialization} (DASI).
+
+DASI selects the initial $k$ centroids by evaluating candidate points across three weighted criteria: local density, spatial spread, and coverage. 
+\begin{enumerate}
+    \item \textbf{Density (30\%):} Computes how representative a point is of a dense region, calculated as the inverse of the average distance to its $10$-nearest neighbors.
+    \item \textbf{Spread (50\%):} Measures the minimum Euclidean distance from a candidate point to any already-chosen centroid.
+    \item \textbf{Coverage (20\%):} The squared spread, which applies an exponential reward for points that are significantly distant from existing centroids, ensuring broad coverage of the feature space.
+\end{enumerate}
+
+This specific weighting scheme was chosen to balance exploration and representation. A 50\% weight for Spread strictly enforces cluster separation, preventing the algorithm from placing redundant centroids within the same local minimum. The 30\% weight for Density acts as a counterweight to Spread, ensuring that centroids are anchored in actual data regions rather than being pushed into empty outlier spaces. Finally, the 20\% Coverage component applies an exponential reward to capture distant but mathematically significant clusters.
+
+The algorithm begins by calculating the local density for all $n$ data points. The first centroid is deterministically chosen as the point with the highest local density. For the remaining $k-1$ centroids, we iteratively calculate the composite score for all unchosen points and select the candidate that maximizes this score.
+
+\subsubsection{Initialization Complexity Analysis}
+The DASI method requires computing a full pairwise distance matrix to determine the $10$-nearest neighbors for the density calculation. For $n$ points in $d$ dimensions, this pairwise computation takes $O(n^2 \cdot d)$ time. 
+
+Subsequently, selecting the remaining $k-1$ centroids requires computing the distance from all $n$ points to the chosen centroids, taking $O(k \cdot n \cdot d)$ operations. Therefore, the overall time complexity of the DASI initialization is:
+\begin{equation}
+    O(n^2 \cdot d + k \cdot n \cdot d)
+\end{equation}
+Assuming $k \ll n$, the $O(n^2 \cdot d)$ term dominates. While this creates a higher upfront initialization cost compared to random selection ($O(k \cdot d)$), the heuristic aims to offset this overhead by significantly reducing the number of iterations required for convergence.
+
+\subsection{Iterative Step Optimization}
+The standard iterative step requires explicit distance calculations between every point and every centroid, resulting in a computational bottleneck. We optimized this process through vectorization and adaptive convergence criteria.
+
+\subsubsection{Vectorized Distance Computation}
+Instead of iterating through points and centroids sequentially, we refactored the Euclidean distance calculation using the following algebraic expansion:
+\begin{equation}
+    ||\mathbf{x} - \mathbf{c}||^2 = ||\mathbf{x}||^2 + ||\mathbf{c}||^2 - 2\mathbf{x}\mathbf{c}^T
+\end{equation}
+By computing the squared norms of the data matrix $\mathbf{X}$ and the centroid matrix $\mathbf{C}$, and utilizing the dot product $2\mathbf{X}\mathbf{C}^T$, we can evaluate all pairwise distances simultaneously using optimized linear algebra libraries. 
+
+\subsubsection{Adaptive Convergence}
+Standard k-means often runs until strict equality of cluster assignments is met. We implemented an early-stopping mechanism that halts the algorithm if the maximum shift of any centroid between iterations falls below a predefined tolerance threshold ($\epsilon = 10^{-4}$).
+
+\subsubsection{Optimized Iterative Complexity}
+The theoretical complexity of the iterative step remains $O(t \cdot n \cdot k \cdot d)$, where $t$ is the number of iterations. However, by replacing explicit loops with vectorized matrix multiplications, the constant factor hidden within the Big-O notation is drastically reduced. Furthermore, the adaptive convergence criterion reduces the total number of iterations $t$. Combined with the $O(n \cdot d)$ cost of updating the centroids, the total runtime of the iterative phase is strictly bounded and heavily accelerated in practice.
 % ------------------------------------------------------------
 % SECTION 4: ALTERNATE K-MEANS (To be filled in)
 % ------------------------------------------------------------
