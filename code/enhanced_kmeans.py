@@ -23,6 +23,9 @@ class EnhancedKMeans:
         self.init_time_ = 0
         self.iter_time_ = 0
 
+        self.sse_history_ = []
+        self.reassigned_history_ = []
+
         if random_state is not None:
             np.random.seed(random_state)
 
@@ -140,13 +143,34 @@ class EnhancedKMeans:
         self.centroids = self._initialize_centroids(X)
         self.init_time_ = time.time() - t0
 
+        # Clear history lists in case fit() is called multiple times
+        self.sse_history_ = []
+        self.reassigned_history_ = []
+
+        # Initial assignment before the loop starts
+        labels, dists = self._assign(X)
+
         t0 = time.time()
         for i in range(self.max_iter):
-            labels, dists = self._assign(X)
+            prev_labels = labels.copy()
+            
+            # Update centroids based on current assignments
             new_centroids, max_shift = self._update_centroids(X, labels)
             self.centroids = new_centroids
+            
+            # Reassign points based on the new centroids
+            labels, dists = self._assign(X)
+            
+            # Calculate iteration metrics
+            current_sse = float(np.sum(dists ** 2))
+            reassigned = int(np.sum(labels != prev_labels))
+            
+            # Track the history for the plots
+            self.sse_history_.append(current_sse)
+            self.reassigned_history_.append(reassigned)
 
-            if max_shift < self.tol:
+            # Stop if centroids barely moved or no points changed clusters
+            if max_shift < self.tol or reassigned == 0:
                 self.n_iter_ = i + 1
                 break
         else:
@@ -154,9 +178,8 @@ class EnhancedKMeans:
 
         self.iter_time_ = time.time() - t0
 
-        # Final assignment and SSE
-        self.labels_, dists = self._assign(X)
-        self.inertia_ = float(np.sum(dists ** 2))
+        self.labels_ = labels
+        self.inertia_ = self.sse_history_[-1] if self.sse_history_ else float(np.sum(dists ** 2))
         return self
 
     def predict(self, X):

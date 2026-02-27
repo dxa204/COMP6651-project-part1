@@ -1,0 +1,10 @@
+{
+    "k_values": [2, 5, 10, 20],
+    "n_runs": 5,
+    "max_iter": 100,
+    "datasets": [
+        "D1_Processed.csv", 
+        "D2_Processed.csv", 
+        "D3_Processed.csv"
+    ]
+}
