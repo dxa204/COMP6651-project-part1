@@ -1,6 +1,7 @@
 import os
 import time
 import numpy as np
+import json
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -15,9 +16,14 @@ from alternate_kmeans import AlternateKMeans
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(SCRIPT_DIR, "results_section4")
 
-K_VALUES = [2, 5, 10, 20]
-N_RUNS = 5
-MAX_ITER = 100
+CONFIG_PATH = os.path.join(SCRIPT_DIR, 'config.json')
+with open(CONFIG_PATH, 'r') as f:
+    config = json.load(f)
+
+K_VALUES = config['k_values']
+N_RUNS   = config['n_runs']
+MAX_ITER = config['max_iter']
+DATASETS = config['datasets']
 
 ALGOS = {
     "sklearn":   "Standard k-means",
@@ -33,7 +39,7 @@ ALGOS = {
 def load_datasets():
     """Load all three processed CSV datasets from the script directory."""
     datasets = {}
-    for fname in ["D1_Processed.csv", "D2_Processed.csv", "D3_Processed.csv"]:
+    for fname in DATASETS:
         path = os.path.join(SCRIPT_DIR, fname)
         if os.path.exists(path):
             df = pd.read_csv(path)
@@ -69,13 +75,9 @@ def fit_sklearn(X, k, seed):
 
 
 def fit_enhanced(X, k, seed):
-    """Fit EnhancedKMeans, adding history attributes if the class omits them."""
+    """Fit EnhancedKMeans."""
     m = EnhancedKMeans(k=k, max_iter=MAX_ITER, random_state=seed)
     m.fit(X)
-    if not hasattr(m, "sse_history_"):
-        m.sse_history_ = [float(m.inertia_)]
-    if not hasattr(m, "reassigned_history_"):
-        m.reassigned_history_ = [np.nan]
     return m
 
 

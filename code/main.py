@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -12,12 +13,18 @@ sns.set_style("whitegrid")
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(SCRIPT_DIR, 'results')
-K_VALUES   = [2, 5, 10, 20]
-N_RUNS     = 5
+CONFIG_PATH = os.path.join(SCRIPT_DIR, 'config.json')
+with open(CONFIG_PATH, 'r') as f:
+    config = json.load(f)
+
+K_VALUES = config['k_values']
+N_RUNS   = config['n_runs']
+MAX_ITER = config['max_iter']
+DATASETS = config['datasets']
 
 def load_datasets():
     datasets = {}
-    for name in ['D1_Processed.csv', 'D2_Processed.csv', 'D3_Processed.csv']:
+    for name in DATASETS:
         path = os.path.join(SCRIPT_DIR, name)
         if os.path.exists(path):
             df = pd.read_csv(path)
@@ -41,7 +48,7 @@ def run_experiments(X, dataset_name):
         print(f"\n  k={k}")
         runs = []
         for run in range(N_RUNS):
-            model = EnhancedKMeans(k=k, max_iter=100, random_state=run)
+            model = EnhancedKMeans(k=k, max_iter=MAX_ITER, random_state=run)
             t0 = time.time()
             model.fit(X)
             elapsed = time.time() - t0

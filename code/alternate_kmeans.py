@@ -42,39 +42,46 @@ class AlternateKMeans:
         dists = np.linalg.norm(X[:, None] - self.centroids[None], axis=2)  # (n, k)
         return np.argmin(dists, axis=1)
 
-    # Find the nearest centroid for a single point (used in update step)
-    def _nearest_centroid(self, point):
-        dists = np.linalg.norm(self.centroids - point, axis=1)
-        return int(np.argmin(dists))
 
-
-    # Update step: recompute centroids, find furthest point in each cluster, and reassign if needed
+    # Update step: recompute all centroids first, then evaluate the furthest points
     def _update_step(self, X, labels):
 
         new_centroids = np.zeros_like(self.centroids)
         reassigned = 0
 
+        # Compute all new centroids
         for i in range(self.k):
             members = np.where(labels == i)[0]
 
             # Revive empty clusters with a random point
             if len(members) == 0:
                 new_centroids[i] = X[np.random.randint(len(X))]
+            else:
+                new_centroids[i] = X[members].mean(axis=0)
+
+        # Find furthest points and reassign if a better new centroid exists
+        new_labels = labels.copy()
+
+        for i in range(self.k):
+            members = np.where(labels == i)[0]
+            if len(members) == 0:
                 continue
 
-            new_centroids[i] = X[members].mean(axis=0)
-
-            # Furthest point from the new centroid
+            # Furthest point from the new centroid of this cluster
             dists = np.linalg.norm(X[members] - new_centroids[i], axis=1)
             furthest_idx = members[np.argmax(dists)]
+            furthest_point = X[furthest_idx]
+
+            # Check distance against all the newly computed centroids
+            all_new_dists = np.linalg.norm(new_centroids - furthest_point, axis=1)
+            best_cluster = int(np.argmin(all_new_dists))
 
             # Move it if a better cluster exists
-            best_cluster = self._nearest_centroid(X[furthest_idx])
             if best_cluster != i:
-                labels[furthest_idx] = best_cluster
+                new_labels[furthest_idx] = best_cluster
                 reassigned += 1
 
-        return new_centroids, labels, reassigned
+        return new_centroids, new_labels, reassigned
 
     # Compute the sum of squared errors (SSE) for the current clustering
     def _compute_sse(self, X, labels):
