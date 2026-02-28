@@ -1,0 +1,82 @@
+SECTION 4 SUMMARY
+============================================================
+
+Dataset: D1_Processed
+------------------------------------------------------------
+k=2
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        223.915       5.20        0.0103    
+Section 3 (Enhanced)    223.915       4.00        0.0007    
+Section 4 (Alternate)   359.181       2.00        0.0002    
+
+k=5
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        103.512       7.40        0.0006    
+Section 3 (Enhanced)    102.760       6.00        0.0008    
+Section 4 (Alternate)   138.373       7.00        0.0008    
+
+k=10
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        64.482        7.60        0.0006    
+Section 3 (Enhanced)    53.566        8.00        0.0014    
+Section 4 (Alternate)   83.010        4.00        0.0009    
+
+k=20
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        31.265        8.80        0.0007    
+Section 3 (Enhanced)    25.290        3.00        0.0018    
+Section 4 (Alternate)   44.926        4.20        0.0016    
+
+
+Dataset: D2_Processed
+------------------------------------------------------------
+k=2
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        277.085       5.60        0.0005    
+Section 3 (Enhanced)    353.693       1.00        0.0002    
+Section 4 (Alternate)   337.808       1.80        0.0001    
+
+k=5
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        166.518       9.80        0.0006    
+Section 3 (Enhanced)    156.641       5.00        0.0004    
+Section 4 (Alternate)   196.643       2.40        0.0003    
+
+k=10
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        105.910       8.00        0.0006    
+Section 3 (Enhanced)    93.490        4.00        0.0006    
+Section 4 (Alternate)   137.397       2.40        0.0005    
+
+k=20
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        58.426        5.80        0.0007    
+Section 3 (Enhanced)    46.642        4.00        0.0013    
+Section 4 (Alternate)   87.511        1.20        0.0005    
+
+
+Dataset: D3_Processed
+------------------------------------------------------------
+k=2
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        4386.132      6.40        0.0013    
+Section 3 (Enhanced)    5466.567      4.00        0.0321    
+Section 4 (Alternate)   5241.173      6.80        0.0010    
+
+k=5
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        2089.052      9.40        0.0018    
+Section 3 (Enhanced)    2118.551      14.00       0.0336    
+Section 4 (Alternate)   3266.246      12.40       0.0024    
+
+k=10
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        1145.901      13.40       0.0022    
+Section 3 (Enhanced)    1141.547      5.00        0.0336    
+Section 4 (Alternate)   2263.514      25.80       0.0072    
+
+k=20
+Algorithm               Avg SSE       Avg Iter    Avg Time  
+Standard k-means        664.892       16.60       0.0029    
+Section 3 (Enhanced)    532.485       7.00        0.0358    
+Section 4 (Alternate)   1403.880      16.80       0.0080    
