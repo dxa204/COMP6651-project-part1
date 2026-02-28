@@ -130,11 +130,11 @@ def plot_stability(results, dataset_name):
     for ax, k in zip(axes.flatten(), K_VALUES):
         history = results[k]['reassignment_history']
         iters   = range(1, len(history) + 1)
-        ax.plot(iters, [v * 100 for v in history], marker='o', markersize=3,
+        ax.plot(iters, history, marker='o', markersize=3,
                 linewidth=1.8, color='mediumseagreen', label='EnhancedKMeans')
         ax.set_title(f"k={k}", fontweight='bold')
         ax.set_xlabel("Iteration")
-        ax.set_ylabel("Points Reassigned (%)")
+        ax.set_ylabel("# Points Reassigned")
         ax.set_xticks(range(1, len(history) + 1, max(1, len(history) // 8)))
         ax.set_ylim(bottom=0)
         ax.legend(fontsize=8)
