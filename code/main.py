@@ -50,11 +50,19 @@ def run_experiments(X, dataset_name):
             print(f"    run {run+1}: SSE={model.inertia_:.1f}  iters={model.n_iter_}  t={elapsed:.3f}s")
 
         best = runs[np.argmin([r['sse'] for r in runs])]
+        sse_values  = [r['sse']    for r in runs]
+        iter_values = [r['n_iter'] for r in runs]
         results[k] = {
-            'best_model':   best['model'],
-            'avg_sse':      np.mean([r['sse']    for r in runs]),
-            'avg_iterations': np.mean([r['n_iter'] for r in runs]),
-            'avg_time':     np.mean([r['time']   for r in runs]),
+            'best_model':      best['model'],
+            'avg_sse':         np.mean(sse_values),
+            'std_sse':         np.std(sse_values),
+            'avg_iterations':  np.mean(iter_values),
+            'std_iterations':  np.std(iter_values),
+            'avg_time':        np.mean([r['time'] for r in runs]),
+            'converged_ratio': np.mean([1 if r['n_iter'] < 100 else 0 for r in runs]),
+
+            'sse_history':            best['model'].sse_history_,
+            'reassignment_history':   best['model'].reassignment_history_,
         }
 
     return results
@@ -89,29 +97,67 @@ def plot_clusters(X, results, dataset_name):
     plt.close()
 
 
-def plot_sse(results, dataset_name):
-    sse   = [results[k]['avg_sse']        for k in K_VALUES]
-    iters = [results[k]['avg_iterations'] for k in K_VALUES]
-
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-
-    axes[0].plot(K_VALUES, sse, marker='o', color='steelblue', linewidth=2)
-    axes[0].set_title("SSE vs k", fontweight='bold')
-    axes[0].set_xlabel("k")
-    axes[0].set_ylabel("SSE")
-    axes[0].set_xticks(K_VALUES)
-    axes[0].grid(True, alpha=0.3)
-
-    axes[1].bar(K_VALUES, iters, color='skyblue', edgecolor='black', alpha=0.75, width=1.5)
-    axes[1].set_title("Avg Iterations to Convergence", fontweight='bold')
-    axes[1].set_xlabel("k")
-    axes[1].set_ylabel("Iterations")
-    axes[1].set_xticks(K_VALUES)
-    axes[1].grid(True, alpha=0.3, axis='y')
-
-    plt.suptitle(f"SSE Analysis — {dataset_name}", fontsize=14, fontweight='bold')
+def plot_convergence(results, dataset_name):
+    fig, axes = plt.subplots(2, 2, figsize=(14, 11))
+    for ax, k in zip(axes.flatten(), K_VALUES):
+        history = results[k]['sse_history']
+        iters   = range(1, len(history) + 1)
+        ax.plot(iters, history, marker='o', markersize=3,
+                linewidth=1.8, color='steelblue', label='EnhancedKMeans')
+        ax.set_title(f"k={k}", fontweight='bold')
+        ax.set_xlabel("Iteration")
+        ax.set_ylabel("SSE (clustering objective)")
+        ax.set_xticks(range(1, len(history) + 1, max(1, len(history) // 8)))
+        ax.legend(fontsize=8)
+        ax.grid(True, alpha=0.3)
+    plt.suptitle(f"4.2.2 Convergence Behaviour — {dataset_name}",
+                 fontsize=14, fontweight='bold')
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, f"{dataset_name}_sse.png"), dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, f"{dataset_name}_convergence.png"),
+                dpi=150, bbox_inches='tight')
+    plt.close()
+
+
+def plot_stability(results, dataset_name):
+    fig, axes = plt.subplots(2, 2, figsize=(14, 11))
+    for ax, k in zip(axes.flatten(), K_VALUES):
+        history = results[k]['reassignment_history']
+        iters   = range(1, len(history) + 1)
+        ax.plot(iters, [v * 100 for v in history], marker='o', markersize=3,
+                linewidth=1.8, color='mediumseagreen', label='EnhancedKMeans')
+        ax.set_title(f"k={k}", fontweight='bold')
+        ax.set_xlabel("Iteration")
+        ax.set_ylabel("Points Reassigned (%)")
+        ax.set_xticks(range(1, len(history) + 1, max(1, len(history) // 8)))
+        ax.set_ylim(bottom=0)
+        ax.legend(fontsize=8)
+        ax.grid(True, alpha=0.3)
+    plt.suptitle(f"4.2.3 Stability: Reassignments per Iteration — {dataset_name}",
+                 fontsize=14, fontweight='bold')
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUTPUT_DIR, f"{dataset_name}_stability.png"),
+                dpi=150, bbox_inches='tight')
+    plt.close()
+
+
+def plot_runtime(results, dataset_name):
+    runtimes = [results[k]['avg_time'] for k in K_VALUES]
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.plot(K_VALUES, runtimes, marker='o', linewidth=2,
+            color='coral', label='EnhancedKMeans')
+    for x, y in zip(K_VALUES, runtimes):
+        ax.annotate(f"{y:.3f}s", (x, y),
+                    textcoords="offset points", xytext=(0, 8),
+                    ha='center', fontsize=8)
+    ax.set_title(f"4.2.4 Runtime vs k — {dataset_name}", fontweight='bold')
+    ax.set_xlabel("k")
+    ax.set_ylabel("Avg Wall-Clock Time (s)")
+    ax.set_xticks(K_VALUES)
+    ax.legend(fontsize=9)
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUTPUT_DIR, f"{dataset_name}_runtime.png"),
+                dpi=150, bbox_inches='tight')
     plt.close()
 
 def save_report(all_results):
@@ -144,12 +190,12 @@ def save_report(all_results):
             "",
             f"Dataset: {dataset_name}",
             "-" * 70,
-            f"{'k':<6} {'Avg SSE':<16} {'Avg Iters':<12}",
+            f"{'k':<6} {'Avg SSE':<16} {'Std SSE':<12} {'Avg Iters':<12} {'Converged':<10}",
             "-" * 70,
         ]
         for k in K_VALUES:
             r = results[k]
-            lines.append(f"{k:<6} {r['avg_sse']:<16.2f} {r['avg_iterations']:<12.1f}")
+            lines.append(f"{k:<6} {r['avg_sse']:<16.2f} {r['std_sse']:<12.2f} {r['avg_iterations']:<12.1f} {r['converged_ratio']*100:<10.0f}%")
         lines.append("")
 
     report = "\n".join(lines)
@@ -174,12 +220,12 @@ def main():
         all_results[name] = results
 
         plot_clusters(X, results, name)
-        plot_sse(results, name)
+        plot_convergence(results, name)
+        plot_stability(results, name)
+        plot_runtime(results, name)
         print(f"Plots saved for {name}")
 
     save_report(all_results)
-    print(f"\nDone. All outputs in: {OUTPUT_DIR}")
-
 
 if __name__ == "__main__":
     main()
