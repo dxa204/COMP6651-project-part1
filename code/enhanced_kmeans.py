@@ -24,7 +24,7 @@ class EnhancedKMeans:
         self.iter_time_ = 0
 
         self.sse_history_ = []
-        self.reassigned_history_ = []
+        self.reassignment_history_ = []
 
         if random_state is not None:
             np.random.seed(random_state)
@@ -151,7 +151,7 @@ class EnhancedKMeans:
 
         # Clear history lists in case fit() is called multiple times
         self.sse_history_ = []
-        self.reassigned_history_ = []
+        self.reassignment_history_ = []
 
         # Initial assignment before the loop starts
         labels, dists = self._assign(X)
@@ -174,7 +174,7 @@ class EnhancedKMeans:
             
             # Track the history for the plots
             self.sse_history_.append(current_sse)
-            self.reassigned_history_.append(reassigned)
+            self.reassignment_history_.append(reassigned)
 
             # Stop if centroids barely moved or no points changed clusters
             if max_shift < self.tol or reassigned == 0:

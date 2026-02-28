@@ -28,7 +28,7 @@ class AlternateKMeans:
         self.inertia_ = None
         self.n_iter_ = 0
         self.sse_history_ = []
-        self.reassigned_history_ = []
+        self.reassignment_history_ = []
 
     # Initialization: pick k random points as centroids, then assign all points to nearest centroid.
     def _init_centroids(self, X):
@@ -104,7 +104,7 @@ class AlternateKMeans:
             self.centroids = new_centroids
 
             self.sse_history_.append(self._compute_sse(X, labels))
-            self.reassigned_history_.append(reassigned)
+            self.reassignment_history_.append(reassigned)
 
             if reassigned == 0 or shift < self.tol:
                 self.n_iter_ = iteration + 1

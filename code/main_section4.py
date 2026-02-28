@@ -70,7 +70,7 @@ def fit_sklearn(X, k, seed):
     m.inertia_ = float(m.inertia_)
     m.n_iter_ = int(m.n_iter_)
     m.sse_history_ = [m.inertia_]
-    m.reassigned_history_ = [np.nan]
+    m.reassignment_history_ = [np.nan]
     return m
 
 
@@ -110,7 +110,7 @@ def run_single(algo, X, k, seed):
         "iters":              int(model.n_iter_),
         "time":               elapsed,
         "sse_history":        list(model.sse_history_),
-        "reassigned_history": list(model.reassigned_history_),
+        "reassignment_history": list(model.reassignment_history_),
     }
 
 
@@ -121,7 +121,7 @@ def aggregate_runs(algo, runs):
         "label":                   ALGOS[algo],
         "best_model":              best["model"],
         "best_sse_history":        best["sse_history"],
-        "best_reassigned_history": best["reassigned_history"],
+        "best_reassignment_history": best["reassignment_history"],
         "avg_sse":   np.mean([r["sse"]   for r in runs]),
         "avg_iters": np.mean([r["iters"] for r in runs]),
         "avg_time":  np.mean([r["time"]  for r in runs]),
@@ -233,7 +233,7 @@ def plot_stability(dataset_name, results):
             r = results[k][algo]
             if r is None:
                 continue
-            y = np.array(r["best_reassigned_history"], dtype=float)
+            y = np.array(r["best_reassignment_history"], dtype=float)
             if np.all(np.isnan(y)):
                 continue
             ax.plot(range(1, len(y) + 1), y, marker="o", label=r["label"])
