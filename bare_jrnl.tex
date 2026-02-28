@@ -376,7 +376,7 @@
 % TODO: UPDATE THIS SECTION AFTER EXPERIMENTS. 
 % Once Part 4 is complete, come back here and add 1-2 sentences summarizing 
 % the specific findings (e.g., "Our proposed initialization improved convergence speed by 20%").
-Clustering is a fundamental unsupervised learning technique used to group data points based on similarity. This paper presents an in-depth study of the k-means algorithm, analyzing its computational complexity and addressing its limitations regarding initialization sensitivity and convergence speed. We propose a novel initialization heuristic and an optimized iterative update step to enhance performance. Furthermore, we implement an ``Alternate k-means'' variant that restricts reassignment to the furthest point in each cluster. We compare the standard k-means, our proposed algorithm, and the alternate variant across three diverse datasets (Iris, AI Global Index, and Global Earthquake Data). Our experimental results evaluate these methods based on cluster quality (SSE), convergence iterations, stability, and runtime efficiency.
+Clustering is a fundamental unsupervised learning technique used to group unlabeled data points based on similarity. This paper presents an in-depth study of the k-means algorithm, analyzing its computational complexity and addressing its limitations regarding initialization sensitivity and convergence speed. We propose a novel initialization heuristic and an optimized iterative update step to enhance performance. Furthermore, we implement an ``Alternate k-means'' variant that restricts reassignment to the furthest point in each cluster. We compare the standard k-means, our proposed algorithm, and the alternate variant across three diverse datasets (Iris, AI Global Index, and Global Earthquake Data). Our experimental results evaluate these methods based on cluster quality (SSE), convergence iterations, stability, and runtime efficiency.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -479,26 +479,26 @@ While the average-case complexity is linear as shown in (\ref{eq:complexity}), i
 \section{Proposed Algorithm}
 To address the limitations of the standard k-means algorithm, particularly its sensitivity to poor initial centroid placement and the high computational cost of its iterative steps, we propose two major enhancements. First, we introduce a custom initialization heuristic. Second, we apply mathematical optimizations to the iterative reassignment phase.
 
-\subsection{Initialization: Density-Aware Spread Initialization}
-Standard initialization methods often rely on uniform random selection, which can lead to suboptimal clustering or slow convergence if centroids are initialized too close together or in outlier regions. To avoid relying on established literature approaches such as k-means++, we designed a novel initialization method called \textit{Density-Aware Spread Initialization} (DASI).
+\subsection{Initialization: Spread-Density-Amplification Initialization}
+Standard initialization methods often rely on uniform random selection, which can lead to suboptimal clustering or slow convergence if centroids are initialized too close together or in outlier regions. To avoid relying on established literature approaches such as k-means++, we designed a novel initialization method called \textit{Spread-Density-Amplification Initialization} (SDAI).
 
-DASI selects the initial $k$ centroids by evaluating candidate points across three weighted criteria: local density, spatial spread, and coverage. 
+SDAI selects the initial $k$ centroids by evaluating candidate points across three weighted criteria: spatial spread, local density, and amplification of squared spatial spread. 
 \begin{enumerate}
-    \item \textbf{Density (30\%):} Computes how representative a point is of a dense region, calculated as the inverse of the average distance to its $10$-nearest neighbors.
     \item \textbf{Spread (50\%):} Measures the minimum Euclidean distance from a candidate point to any already-chosen centroid.
-    \item \textbf{Coverage (20\%):} The squared spread, which applies an exponential reward for points that are significantly distant from existing centroids, ensuring broad coverage of the feature space.
+    \item \textbf{Density (30\%):} Computes how representative a point is of a dense region, calculated as the inverse of the average distance to its $10$-nearest neighbors.
+    \item \textbf{Amplification (20\%):} The squared spread, which applies an exponential reward for points that are significantly distant from existing centroids, amplifying the weight of these specific points on the feature space.
 \end{enumerate}
 
-This specific weighting scheme was chosen to balance exploration and representation. A 50\% weight for Spread strictly enforces cluster separation, preventing the algorithm from placing redundant centroids within the same local minimum. The 30\% weight for Density acts as a counterweight to Spread, ensuring that centroids are anchored in actual data regions rather than being pushed into empty outlier spaces. Finally, the 20\% Coverage component applies an exponential reward to capture distant but mathematically significant clusters.
+This specific weighting scheme was chosen to balance exploration and representation. A 50\% weight for Spread strictly enforces cluster separation, preventing the algorithm from placing redundant centroids within the same local minimum. The 30\% weight for Density acts as a counterweight to Spread, ensuring that centroids are anchored in actual data regions rather than being pushed into empty outlier spaces. Finally, the 20\% Amplification component applies an exponential weight to capture distant but mathematically significant clusters, making certain points more valuable than others during initialization.
 
 The algorithm begins by calculating the local density for all $n$ data points. The first centroid is deterministically chosen as the point with the highest local density. For the remaining $k-1$ centroids, we iteratively calculate the composite score for all unchosen points and select the candidate that maximizes this score.
 
 \subsubsection{Initialization Complexity Analysis}
-The DASI method requires computing a full pairwise distance matrix to determine the $10$-nearest neighbors for the density calculation. For $n$ points in $d$ dimensions, this pairwise computation takes $O(n^2 \cdot d)$ time. 
+The SDAI method requires computing a full pairwise distance matrix to determine the $10$-nearest neighbors for the density calculation. For $n$ data points in $d$ features/dimensions, this pairwise computation takes $O(n^2 \cdot d)$ time. 
 
-Subsequently, selecting the remaining $k-1$ centroids requires computing the distance from all $n$ points to the chosen centroids, taking $O(k \cdot n \cdot d)$ operations. Therefore, the overall time complexity of the DASI initialization is:
+Subsequently, selecting the remaining $k-1$ centroids requires computing the distance from all $n$ points to the chosen centroids, taking $O(k^2 \cdot n \cdot d)$ operations. Therefore, the overall time complexity of the SDAI is:
 \begin{equation}
-    O(n^2 \cdot d + k \cdot n \cdot d)
+    O(n^2 \cdot d + k^2 \cdot n \cdot d)
 \end{equation}
 Assuming $k \ll n$, the $O(n^2 \cdot d)$ term dominates. While this creates a higher upfront initialization cost compared to random selection ($O(k \cdot d)$), the heuristic aims to offset this overhead by significantly reducing the number of iterations required for convergence.
 
