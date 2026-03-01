@@ -62,15 +62,51 @@ def preprocess(df):
 # ----------------------------
 
 def fit_sklearn(X, k, seed):
-    """Fit sklearn KMeans and normalise attribute names to match custom classes."""
-    m = KMeans(n_clusters=k, init="random", n_init=1,
-               max_iter=MAX_ITER, random_state=seed, algorithm="lloyd")
-    m.fit(X)
+    """
+    Fit sklearn KMeans iteratively to capture per-iteration metrics 
+    for the convergence and stability plots.
+    """
+    # Manually pick initial centroids to maintain consistency across the manual loop
+    np.random.seed(seed)
+    init_centroids = X[np.random.choice(X.shape[0], k, replace=False)]
+    
+    # Configure Sklearn to only run one iteration at a time
+    m = KMeans(n_clusters=k, n_init=1, max_iter=1, random_state=seed, algorithm="lloyd")
+    
+    sse_history = []
+    reassignment_history = []
+    prev_labels = None
+    current_centroids = init_centroids
+    
+    for i in range(MAX_ITER):
+        # Pass the centroids from the previous step as the starting point
+        m.set_params(init=current_centroids)
+        m.fit(X)
+        
+        # Record SSE for 4.2.2
+        sse_history.append(float(m.inertia_))
+        
+        # Record reassignments for 4.2.3
+        if prev_labels is not None:
+            reassigned = int(np.sum(m.labels_ != prev_labels))
+            reassignment_history.append(reassigned)
+            
+            # Stop if no points changed clusters or centroids barely moved
+            if reassigned == 0 or np.allclose(current_centroids, m.cluster_centers_):
+                break
+        else:
+            # For the very first iteration, consider all points "reassigned"
+            reassignment_history.append(len(X))
+            
+        prev_labels = m.labels_.copy()
+        current_centroids = m.cluster_centers_
+        
+    # Append the custom history lists to the model object
     m.centroids = m.cluster_centers_
-    m.inertia_ = float(m.inertia_)
-    m.n_iter_ = int(m.n_iter_)
-    m.sse_history_ = [m.inertia_]
-    m.reassignment_history_ = [np.nan]
+    m.n_iter_ = len(sse_history)
+    m.sse_history_ = sse_history
+    m.reassignment_history_ = reassignment_history
+    
     return m
 
 
